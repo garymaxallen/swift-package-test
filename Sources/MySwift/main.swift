@@ -23,14 +23,17 @@ func func3() {
     print("t.num1: ", t.num1)
 }
 
-func3()
+// func3()
 
 func func4() {
-    //   var t:<UnsafeMutablePointer<tty>>?
-    //   createPseudoTerminal(t)
-    //   print("t.num1: ", t.num1)
+    // let ptr: UnsafeMutablePointer<tty> = tty()
+    var t: UnsafeMutablePointer<tty>?
+    print("t.num1: ")
+    createPseudoTerminal(&t)
+    
+    print("t.num1: ")
 }
 
-// func4()
+func4()
 
 // my_c_func1()

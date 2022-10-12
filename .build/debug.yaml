@@ -1,0 +1,79 @@
+client:
+  name: basic
+tools: {}
+targets:
+  "MyC-debug.module": ["<MyC-debug.module>"]
+  "MySwift-debug.exe": ["<MySwift-debug.exe>"]
+  "MySwift-debug.module": ["<MySwift-debug.module>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<MyC-debug.module>","<MySwift-debug.exe>","<MySwift-debug.module>"]
+  "test": ["<MyC-debug.module>","<MySwift-debug.exe>","<MySwift-debug.module>"]
+default: "main"
+nodes:
+  "D:\\tmp\\swift-package-test\\Sources\\MyC/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "D:\\tmp\\swift-package-test\\Sources\\MySwift/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "<MyC-debug.module>":
+    tool: phony
+    inputs: ["D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MyC.build\\MyC.c.o"]
+    outputs: ["<MyC-debug.module>"]
+
+  "<MySwift-debug.exe>":
+    tool: phony
+    inputs: ["D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.exe"]
+    outputs: ["<MySwift-debug.exe>"]
+
+  "<MySwift-debug.module>":
+    tool: phony
+    inputs: ["D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\main.swift.o","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\MySwift.swiftmodule"]
+    outputs: ["<MySwift-debug.module>"]
+
+  "C.MySwift-debug.exe":
+    tool: shell
+    inputs: ["D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MyC.build\\MyC.c.o","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\MySwift.swiftmodule.o","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\main.swift.o"]
+    outputs: ["D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.exe"]
+    description: "Linking D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.exe"
+    args: ["C:\\Library\\Developer\\Toolchains\\unknown-Asserts-development.xctoolchain\\usr\\bin\\swiftc.exe","-L","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug","-o","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.exe","-module-name","MySwift","-emit-executable","@D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.product\\Objects.LinkFileList","-target","x86_64-unknown-windows-msvc","-sdk","C:\\Library\\Developer\\Platforms\\Windows.platform\\Developer\\SDKs\\Windows.sdk","-libc","MD","-I","C:\\Library\\Developer\\Platforms\\Windows.platform\\Developer\\Library\\XCTest-development\\usr\\lib\\swift\\windows\\x86_64","-L","C:\\Library\\Developer\\Platforms\\Windows.platform\\Developer\\Library\\XCTest-development\\usr\\lib\\swift\\windows\\x86_64","-use-ld=lld","-L","C:\\Library\\Developer\\Toolchains\\unknown-Asserts-development.xctoolchain\\usr\\lib"]
+
+  "C.MySwift-debug.module":
+    tool: swift-compiler
+    inputs: ["D:\\tmp\\swift-package-test\\Sources\\MySwift\\main.swift","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MyC.build\\MyC.c.o"]
+    outputs: ["D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\main.swift.o","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\MySwift.swiftmodule"]
+    executable: "C:\\Library\\Developer\\Toolchains\\unknown-Asserts-development.xctoolchain\\usr\\bin\\swiftc.exe"
+    module-name: "MySwift"
+    module-output-path: "D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\MySwift.swiftmodule"
+    import-paths: ["D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug"]
+    temps-path: "D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build"
+    objects: ["D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\main.swift.o"]
+    other-args: ["-target","x86_64-unknown-windows-msvc","-swift-version","5","-enable-batch-mode","-index-store-path","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\index\\store","-Onone","-enable-testing","-g","-j8","-DSWIFT_PACKAGE","-DDEBUG","-Xcc","-fmodule-map-file=D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MyC.build\\module.modulemap","-Xcc","-I","-Xcc","D:\\tmp\\swift-package-test\\Sources\\MyC\\include","-module-cache-path","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\ModuleCache","-parseable-output","-color-diagnostics","-sdk","C:\\Library\\Developer\\Platforms\\Windows.platform\\Developer\\SDKs\\Windows.sdk","-libc","MD","-I","C:\\Library\\Developer\\Platforms\\Windows.platform\\Developer\\Library\\XCTest-development\\usr\\lib\\swift\\windows\\x86_64","-L","C:\\Library\\Developer\\Platforms\\Windows.platform\\Developer\\Library\\XCTest-development\\usr\\lib\\swift\\windows\\x86_64","-use-ld=lld"]
+    sources: ["D:\\tmp\\swift-package-test\\Sources\\MySwift\\main.swift"]
+    is-library: false
+    enable-whole-module-optimization: false
+    num-threads: 8
+
+  "D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MyC.build\\MyC.c.o":
+    tool: clang
+    inputs: ["D:\\tmp\\swift-package-test\\Sources\\MyC\\MyC.c"]
+    outputs: ["D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MyC.build\\MyC.c.o"]
+    description: "Compiling MyC MyC.c"
+    args: ["C:\\Library\\Developer\\Toolchains\\unknown-Asserts-development.xctoolchain\\usr\\bin\\clang.exe","-target","x86_64-unknown-windows-msvc","-g","-gcodeview","-O0","-DSWIFT_PACKAGE=1","-DDEBUG=1","-fblocks","-I","D:\\tmp\\swift-package-test\\Sources\\MyC\\include","-D_MT","-D_DLL","-Xclang","--dependent-lib=msvcrt","-MD","-MT","dependencies","-MF","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MyC.build\\MyC.c.d","-c","D:\\tmp\\swift-package-test\\Sources\\MyC\\MyC.c","-o","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MyC.build\\MyC.c.o"]
+    deps: "D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MyC.build\\MyC.c.d"
+
+  "D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\MySwift.swiftmodule.o":
+    tool: shell
+    inputs: ["D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\MySwift.swiftmodule"]
+    outputs: ["D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\MySwift.swiftmodule.o"]
+    description: "Wrapping AST for MySwift for debugging"
+    args: ["C:\\Library\\Developer\\Toolchains\\unknown-Asserts-development.xctoolchain\\usr\\bin\\swiftc.exe","-modulewrap","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\MySwift.swiftmodule","-o","D:\\tmp\\swift-package-test\\.build\\x86_64-unknown-windows-msvc\\debug\\MySwift.build\\MySwift.swiftmodule.o","-target","x86_64-unknown-windows-msvc"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["D:\\tmp\\swift-package-test\\Sources\\MyC/","D:\\tmp\\swift-package-test\\Sources\\MySwift/","D:\\tmp\\swift-package-test\\Package.swift","D:\\tmp\\swift-package-test\\Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

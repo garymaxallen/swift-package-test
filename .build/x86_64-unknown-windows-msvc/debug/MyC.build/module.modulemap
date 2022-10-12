@@ -1,0 +1,4 @@
+module MyC {
+    umbrella header "D:\\tmp\\swift-package-test\\Sources\\MyC\\include\\MyC.h"
+    export *
+}

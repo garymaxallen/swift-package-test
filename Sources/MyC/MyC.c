@@ -30,6 +30,9 @@ void createPseudoTerminal(struct tty **tty)
     printf("&tty: %p\n", &tty);
     (*tty)->num1 = 1;
     (**tty).num2 = 2;
+
+    printf("\n");
+    printf("(*tty)->num1: %x\n", (*tty)->num1);
     // *tty = pty_open_fake(&ios_pty_driver);
     // if (IS_ERR(*tty))
     //     return nil;

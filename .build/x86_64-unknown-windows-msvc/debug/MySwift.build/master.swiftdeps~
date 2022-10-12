@@ -1,0 +1,6 @@
+version: "compnerd.org Swift version 5.7 (swift-5.7-RELEASE)"
+options: "3343c3232ad85b52bd6c2975834b89612e50d882e0f75170cd4cf1721e6db522"
+build_start_time: [1665583460, 718999862]
+build_end_time: [1665583461, 703998565]
+inputs:
+  "D:\\tmp\\swift-package-test\\Sources\\MySwift\\main.swift": [1665583377, 0]
