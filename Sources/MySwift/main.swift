@@ -1,5 +1,10 @@
-import MyPoint
+import MyC
 
-print("++++++++++++++++++ Hello, world +++++++++++++++++++++++++")
-let p = MyPoint(x: 4, y: 20)
-print("Hello, world!", p.x, p.y)
+func func1() {
+  print("++++++++++++++++++ Hello, world +++++++++++++++++++++++++")
+
+  let p1 = tty(num1: 3, num2: 8)
+  print("Hello, world!", p1.num1, p1.num2)
+}
+
+func1()

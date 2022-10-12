@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.7
 import PackageDescription
 
 let package = Package(
@@ -11,11 +11,11 @@ let package = Package(
     .executableTarget(
       name: "MySwift",
       dependencies: [
-        .target(name: "MyPoint")
+        .target(name: "MyC")
       ]
     ),
     .target(
-      name: "MyPoint"
+      name: "MyC"
     ),
   ]
 )
