@@ -1,0 +1,79 @@
+client:
+  name: basic
+tools: {}
+targets:
+  "MyC-debug.module": ["<MyC-debug.module>"]
+  "MySwift-debug.exe": ["<MySwift-debug.exe>"]
+  "MySwift-debug.module": ["<MySwift-debug.module>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<MyC-debug.module>","<MySwift-debug.exe>","<MySwift-debug.module>"]
+  "test": ["<MyC-debug.module>","<MySwift-debug.exe>","<MySwift-debug.module>"]
+default: "main"
+nodes:
+  "/root/swift-package-test/Sources/MyC/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/root/swift-package-test/Sources/MySwift/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+commands:
+  "/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MyC.build/MyC.c.o":
+    tool: clang
+    inputs: ["/root/swift-package-test/Sources/MyC/MyC.c"]
+    outputs: ["/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MyC.build/MyC.c.o"]
+    description: "Compiling MyC MyC.c"
+    args: ["/usr/local/swift-5.7-RELEASE-ubuntu20.04/usr/bin/clang","-target","x86_64-unknown-linux-gnu","-g","-O0","-DSWIFT_PACKAGE=1","-DDEBUG=1","-fblocks","-fmodules","-fmodule-name=MyC","-I","/root/swift-package-test/Sources/MyC/include","-fmodules-cache-path=/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/ModuleCache","-fPIC","-MD","-MT","dependencies","-MF","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MyC.build/MyC.c.d","-c","/root/swift-package-test/Sources/MyC/MyC.c","-o","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MyC.build/MyC.c.o"]
+    deps: "/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MyC.build/MyC.c.d"
+
+  "/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.build/MySwift.swiftmodule.o":
+    tool: shell
+    inputs: ["/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.swiftmodule"]
+    outputs: ["/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.build/MySwift.swiftmodule.o"]
+    description: "Wrapping AST for MySwift for debugging"
+    args: ["/usr/local/swift-5.7-RELEASE-ubuntu20.04/usr/bin/swiftc","-modulewrap","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.swiftmodule","-o","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.build/MySwift.swiftmodule.o","-target","x86_64-unknown-linux-gnu"]
+
+  "<MyC-debug.module>":
+    tool: phony
+    inputs: ["/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MyC.build/MyC.c.o"]
+    outputs: ["<MyC-debug.module>"]
+
+  "<MySwift-debug.exe>":
+    tool: phony
+    inputs: ["/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift"]
+    outputs: ["<MySwift-debug.exe>"]
+
+  "<MySwift-debug.module>":
+    tool: phony
+    inputs: ["/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.build/main.swift.o","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.swiftmodule"]
+    outputs: ["<MySwift-debug.module>"]
+
+  "C.MySwift-debug.exe":
+    tool: shell
+    inputs: ["/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MyC.build/MyC.c.o","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.build/MySwift.swiftmodule.o","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.build/main.swift.o"]
+    outputs: ["/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift"]
+    description: "Linking ./.build/x86_64-unknown-linux-gnu/debug/MySwift"
+    args: ["/usr/local/swift-5.7-RELEASE-ubuntu20.04/usr/bin/swiftc","-L","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug","-o","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift","-module-name","MySwift","-emit-executable","-Xlinker","--defsym","-Xlinker","main=MySwift_main","-Xlinker","-rpath=$ORIGIN","@/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.product/Objects.LinkFileList","-target","x86_64-unknown-linux-gnu","-L","/usr/local/swift-5.7-RELEASE-ubuntu20.04/usr/lib"]
+
+  "C.MySwift-debug.module":
+    tool: swift-compiler
+    inputs: ["/root/swift-package-test/Sources/MySwift/main.swift","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MyC.build/MyC.c.o"]
+    outputs: ["/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.build/main.swift.o","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.swiftmodule"]
+    executable: "/usr/local/swift-5.7-RELEASE-ubuntu20.04/usr/bin/swiftc"
+    module-name: "MySwift"
+    module-output-path: "/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.swiftmodule"
+    import-paths: ["/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug"]
+    temps-path: "/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.build"
+    objects: ["/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MySwift.build/main.swift.o"]
+    other-args: ["-target","x86_64-unknown-linux-gnu","-swift-version","5","-enable-batch-mode","-index-store-path","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/index/store","-Onone","-enable-testing","-g","-j2","-DSWIFT_PACKAGE","-DDEBUG","-Xcc","-fmodule-map-file=/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/MyC.build/module.modulemap","-Xcc","-I","-Xcc","/root/swift-package-test/Sources/MyC/include","-module-cache-path","/root/swift-package-test/.build/x86_64-unknown-linux-gnu/debug/ModuleCache","-parseable-output","-Xfrontend","-entry-point-function-name","-Xfrontend","MySwift_main"]
+    sources: ["/root/swift-package-test/Sources/MySwift/main.swift"]
+    is-library: false
+    enable-whole-module-optimization: false
+    num-threads: 2
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/root/swift-package-test/Sources/MyC/","/root/swift-package-test/Sources/MySwift/","/root/swift-package-test/Package.swift","/root/swift-package-test/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+

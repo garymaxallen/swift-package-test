@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug MySwift",
+            "program": "${workspaceFolder:swift-package-test}/.build/debug/MySwift",
+            "args": [],
+            "cwd": "${workspaceFolder:swift-package-test}",
+            "preLaunchTask": "swift: Build Debug MySwift"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Release MySwift",
+            "program": "${workspaceFolder:swift-package-test}/.build/release/MySwift",
+            "args": [],
+            "cwd": "${workspaceFolder:swift-package-test}",
+            "preLaunchTask": "swift: Build Release MySwift"
+        }
+    ]
+}
