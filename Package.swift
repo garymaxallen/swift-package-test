@@ -6,7 +6,6 @@ let package = Package(
   products: [
     .executable(name: "MySwift", targets: ["MySwift"])
   ],
-  dependencies: [],
   targets: [
     .executableTarget(
       name: "MySwift",
