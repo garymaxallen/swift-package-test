@@ -6,13 +6,15 @@ void my_c_func1()
     printf("++++++++++++ my_c_func1()\n");
 }
 
-void my_c_func2(struct tty *tty){
+void my_c_func2(struct tty *tty)
+{
     printf("\n");
     printf("(*tty).num1: %x\n", (*tty).num1);
     (*tty).num1 = 888;
 }
 
-void my_c_func3(struct tty tty){
+void my_c_func3(struct tty tty)
+{
     printf("\n");
     printf("tty.num1: %x\n", tty.num1);
     tty.num1 = 888;
