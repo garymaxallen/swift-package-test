@@ -36,6 +36,7 @@ func func4() {
   // print("pp.pointee?.pointee: ", (pp.pointee?.pointee)!)
   // pp.pointee?.initialize(to: tty(num1: 3, num2: 8))
   pp.initialize(to: UnsafeMutablePointer<tty>.allocate(capacity: 1))
+  // print("pp: ", pp) 
 
   // print("pp.pointee address: ", Unmanaged<AnyObject>.passUnretained(pp.pointee as AnyObject).toOpaque())
   // print("pp address: ", Unmanaged<AnyObject>.passUnretained(pp as AnyObject).toOpaque())
@@ -47,6 +48,18 @@ func func4() {
 }
 
 func4()
+
+func func6() {
+  print()
+  print("func6()")
+  var str: String = "foo" 
+  // withUnsafePointer(to: &str) { NSLog("\($0)") }
+  withUnsafePointer(to: &str) { print("&str:", "\($0)") }
+  withUnsafePointer(to: &str) { print("\($0)") }
+  withUnsafePointer(to: &str) { print("\($0)") }
+}
+
+// func6()
 
 // my_c_func1()
 
