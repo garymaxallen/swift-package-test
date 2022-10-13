@@ -34,7 +34,8 @@ func func4() {
   // print("pp: ", pp) 
   // print("pp.pointee: ", pp.pointee!)
   // print("pp.pointee?.pointee: ", (pp.pointee?.pointee)!)
-  pp.pointee?.initialize(to: tty(num1: 3, num2: 8))
+  // pp.pointee?.initialize(to: tty(num1: 3, num2: 8))
+  pp.initialize(to: UnsafeMutablePointer<tty>.allocate(capacity: 1))
 
   // print("pp.pointee address: ", Unmanaged<AnyObject>.passUnretained(pp.pointee as AnyObject).toOpaque())
   // print("pp address: ", Unmanaged<AnyObject>.passUnretained(pp as AnyObject).toOpaque())
