@@ -24,15 +24,15 @@ void my_c_func3(struct tty tty)
 void createPseudoTerminal(struct tty **tty)
 {
     printf("\n");
+    printf("createPseudoTerminal()\n");
     // printf("**tty: %x\n", **tty);
     printf("*tty: %p\n", *tty);
     printf("tty: %p\n", tty);
     printf("&tty: %p\n", &tty);
     (*tty)->num1 = 1;
     (**tty).num2 = 2;
-
-    printf("\n");
     printf("(*tty)->num1: %x\n", (*tty)->num1);
+    printf("(**tty).num2: %x\n", (**tty).num2);
     // *tty = pty_open_fake(&ios_pty_driver);
     // if (IS_ERR(*tty))
     //     return nil;
