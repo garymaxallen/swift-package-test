@@ -31,7 +31,14 @@ func func4() {
   print("func4()")
   let pp = UnsafeMutablePointer<UnsafeMutablePointer<tty>?>.allocate(capacity: 1)
   // must print pp here, very strange
-  print("pp: ", pp) 
+  // print("pp: ", pp) 
+  // print("pp.pointee: ", pp.pointee!)
+  // print("pp.pointee?.pointee: ", (pp.pointee?.pointee)!)
+  pp.pointee?.initialize(to: tty(num1: 3, num2: 8))
+
+  // print("pp.pointee address: ", Unmanaged<AnyObject>.passUnretained(pp.pointee as AnyObject).toOpaque())
+  // print("pp address: ", Unmanaged<AnyObject>.passUnretained(pp as AnyObject).toOpaque())
+
   createPseudoTerminal(pp)
 
   print("pp.pointee?.pointee.num1: ", (pp.pointee?.pointee.num1)!)

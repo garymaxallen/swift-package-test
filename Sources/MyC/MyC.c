@@ -25,6 +25,8 @@ void createPseudoTerminal(struct tty **tty)
 {
     printf("\n");
     printf("createPseudoTerminal()\n");
+    printf("(*tty)->num1: %x\n", (*tty)->num1);
+    printf("(**tty).num2: %x\n", (**tty).num2);
     // printf("**tty: %x\n", **tty);
     printf("*tty: %p\n", *tty);
     printf("tty: %p\n", tty);
