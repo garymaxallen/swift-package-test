@@ -30,17 +30,12 @@ func func4() {
   print()
   print("func4()")
   let pp = UnsafeMutablePointer<UnsafeMutablePointer<tty>?>.allocate(capacity: 1)
-  // pp.initialize()
-  // ptr.pointee == tty(num1: 3, num2: 8)
-  // t = malloc()
-  // t?.pointee = tty(num1: 3, num2: 8)
-  // print("t?.pointee.num1: ", t?.pointee.num1 as Any)
-  // print("t.num1: ", t as Any)
+  print("pp: ", pp) // must print pp here, very strange
+  
   createPseudoTerminal(pp)
 
-  let xx = pp.pointee?.pointee.num1
-
-  print("t.num1: ", xx!)
+  print("pp.pointee?.pointee.num1: ", (pp.pointee?.pointee.num1)!)
+  print("pp.pointee?.pointee.num2: ", (pp.pointee?.pointee.num2)!)
 }
 
 func4()

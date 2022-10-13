@@ -33,6 +33,7 @@ void createPseudoTerminal(struct tty **tty)
     (**tty).num2 = 2;
     printf("(*tty)->num1: %x\n", (*tty)->num1);
     printf("(**tty).num2: %x\n", (**tty).num2);
+    printf("\n");
     // *tty = pty_open_fake(&ios_pty_driver);
     // if (IS_ERR(*tty))
     //     return nil;
