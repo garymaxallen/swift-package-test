@@ -30,8 +30,8 @@ func func4() {
   print()
   print("func4()")
   let pp = UnsafeMutablePointer<UnsafeMutablePointer<tty>?>.allocate(capacity: 1)
-  print("pp: ", pp) // must print pp here, very strange
-  
+  // must print pp here, very strange
+  print("pp: ", pp) 
   createPseudoTerminal(pp)
 
   print("pp.pointee?.pointee.num1: ", (pp.pointee?.pointee.num1)!)
