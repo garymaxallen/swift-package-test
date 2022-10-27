@@ -41,3 +41,8 @@ void createPseudoTerminal(struct tty **tty)
     //     return nil;
     // return (__bridge Terminal *) (*tty)->data;
 }
+
+void my_c_func4()
+{
+    (struct fd *) -2;
+}
