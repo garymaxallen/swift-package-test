@@ -44,5 +44,33 @@ void createPseudoTerminal(struct tty **tty)
 
 void my_c_func4()
 {
-    (struct fd *) -2;
+    printf("(int *)-0: %p\n", (int *)-0);
+    printf("(int *)+0: %p\n", (int *)+0);
+    printf("(int *)-1: %p\n", (int *)-1);
+    printf("(int *)+1: %p\n", (int *)+1);
+    printf("(int *)-2: %p\n", (int *)-2);
+    printf("(int *)+2: %p\n", (int *)+2);
+
+    printf("(struct fd *)+2: %p\n", (struct fd *)+2);
+    printf("(struct fd *)-0: %p\n", (struct fd *)-0);
+    printf("(struct fd *)+0: %p\n", (struct fd *)+0);
+    printf("(struct fd *)-1: %p\n", (struct fd *)-1);
+    printf("(struct fd *)-2: %p\n", (struct fd *)-2);
+
+    printf("(double *)-2: %p\n", (double *)-2);
+    printf("(int *)-2: %p\n", (int *)-2);
+    printf("(char *)-2: %p\n", (char *)-2);
+
+    int *p;
+    printf("p: %p\n", p);
+    printf("p - 2: %p\n", p - 2);
+
+    int *p1 = (int *)-2;
+    printf("p1: %p\n", p1);
+
+    int *p3 = (int *)-0;
+    printf("p3: %p\n", p3);
+
+    struct fd *p2 = (struct fd *)-2;
+    printf("p2: %p\n", p2);
 }

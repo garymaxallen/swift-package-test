@@ -31,12 +31,12 @@ func func4() {
   print("func4()")
   let pp = UnsafeMutablePointer<UnsafeMutablePointer<tty>?>.allocate(capacity: 1)
   // must print pp here, very strange
-  // print("pp: ", pp) 
+  // print("pp: ", pp)
   // print("pp.pointee: ", pp.pointee!)
   // print("pp.pointee?.pointee: ", (pp.pointee?.pointee)!)
   // pp.pointee?.initialize(to: tty(num1: 3, num2: 8))
   pp.initialize(to: UnsafeMutablePointer<tty>.allocate(capacity: 1))
-  // print("pp: ", pp) 
+  // print("pp: ", pp)
 
   // print("pp.pointee address: ", Unmanaged<AnyObject>.passUnretained(pp.pointee as AnyObject).toOpaque())
   // print("pp address: ", Unmanaged<AnyObject>.passUnretained(pp as AnyObject).toOpaque())
@@ -47,12 +47,12 @@ func func4() {
   print("pp.pointee?.pointee.num2: ", (pp.pointee?.pointee.num2)!)
 }
 
-func4()
+// func4()
 
 func func6() {
   print()
   print("func6()")
-  var str: String = "foo" 
+  var str: String = "foo"
   // withUnsafePointer(to: &str) { NSLog("\($0)") }
   withUnsafePointer(to: &str) { print("&str:", "\($0)") }
   withUnsafePointer(to: &str) { print("\($0)") }
@@ -70,7 +70,9 @@ func func5() {
 
   let pointer = UnsafeMutablePointer<[Int]>.allocate(capacity: 4)
   print("pointer: ", pointer)
-  print("pointer.pointee address: ", Unmanaged<AnyObject>.passUnretained(pointer.pointee as AnyObject).toOpaque())
+  print(
+    "pointer.pointee address: ",
+    Unmanaged<AnyObject>.passUnretained(pointer.pointee as AnyObject).toOpaque())
   print("arr address: ", Unmanaged<AnyObject>.passUnretained(arr as AnyObject).toOpaque())
   pointer.initialize(to: arr)
   print("pointer: ", pointer)
@@ -103,7 +105,7 @@ func func5() {
   pointer2.initialize(to: arr2)
 
   for item in pointer2.pointee {
-    print("item: ",item.description())
+    print("item: ", item.description())
   }
 
   // pointer2.deinitialize(count: 1)
@@ -111,3 +113,21 @@ func func5() {
 }
 
 // func5()
+
+// my_c_func4()
+
+func func7() {
+  let ptr = UnsafeMutablePointer<Int>.allocate(capacity: 1)
+  print("ptr: ", ptr)
+  print(
+    "UnsafeMutablePointer<Int>.allocate(capacity: 1): ",
+    UnsafeMutablePointer<Int>.allocate(capacity: 1))
+
+  let ptr2 = UnsafePointer<Int>.init(bitPattern: 1)
+  print("ptr2: ", ptr2!)
+
+  let ptr3 = UnsafePointer<fd>.init(bitPattern: 1)
+  print("ptr3: ", ptr3!)
+}
+
+func7()
