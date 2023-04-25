@@ -130,4 +130,44 @@ func func7() {
   print("ptr3: ", ptr3!)
 }
 
-func7()
+// func7()
+
+func regextest() {
+  // if #available(macOS 13.0, *) {
+  //   let keyAndValue = #/(.+?): (.+)/#
+  //   // let simpleDigits = try? Regex("[0-9]+")
+  //   let setting = "color: 161 103 230"
+  //   // if setting.contains(simpleDigits!) {
+  //   //   print("'\(setting)' contains some digits.")
+  //   // }
+  //   if let match = setting.firstMatch(of: keyAndValue) {
+  //     print("Key: \(match.1)")
+  //     print("Value: \(match.2)")
+  //   }
+  // } else {
+  //   // Fallback on earlier versions
+  // }
+
+  if #available(macOS 13.0, *) {
+    let url = URL(filePath: "/Users/pcl/Documents/tmp/swift-package-test/yt.txt")
+    let text = try? String(
+      contentsOf: url,
+      encoding: String.Encoding.utf8)
+    // print("text: ", text!)
+    // let regex = #/"videoId":"ticu81_VQ0Q"/#
+    let regex = #/("videoId":".+?")/#
+    let matches = text!.matches(of: regex)
+    var myset = Set<String>()
+    for i in (0...matches.count - 1) {
+      let str = matches[i].0
+      myset.insert(String(str))
+      // print("matches[%d].0: ", i, str)
+    }
+    print("myset.count: ", myset.count)
+    for item in myset {
+      print("item: ", item)
+    }
+  }
+}
+
+regextest()
