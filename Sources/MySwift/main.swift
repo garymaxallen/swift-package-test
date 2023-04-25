@@ -165,7 +165,7 @@ func regextest() {
     }
     print("myset.count: ", myset.count)
     for item in myset {
-      print("item: ", item)
+      print("item: ", item.components(separatedBy: "\"")[3])
     }
   }
 }
