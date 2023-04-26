@@ -133,28 +133,14 @@ func func7() {
 // func7()
 
 func regextest() {
-  // if #available(macOS 13.0, *) {
-  //   let keyAndValue = #/(.+?): (.+)/#
-  //   // let simpleDigits = try? Regex("[0-9]+")
-  //   let setting = "color: 161 103 230"
-  //   // if setting.contains(simpleDigits!) {
-  //   //   print("'\(setting)' contains some digits.")
-  //   // }
-  //   if let match = setting.firstMatch(of: keyAndValue) {
-  //     print("Key: \(match.1)")
-  //     print("Value: \(match.2)")
-  //   }
-  // } else {
-  //   // Fallback on earlier versions
-  // }
-
+  // "https://www.youtube.com/channel/UCYfdidRxbB8Qhf0Nx7ioOYw"
   if #available(macOS 13.0, *) {
     let url = URL(filePath: "/Users/pcl/Documents/tmp/swift-package-test/yt.txt")
     let text = try? String(
       contentsOf: url,
       encoding: String.Encoding.utf8)
     // print("text: ", text!)
-    // let regex = #/"videoId":"ticu81_VQ0Q"/#
+    // grep -shoP '\"videoId\":\".*?\"'
     let regex = #/("videoId":".+?")/#
     let matches = text!.matches(of: regex)
     var myset = Set<String>()
@@ -170,4 +156,36 @@ func regextest() {
   }
 }
 
-regextest()
+func regextest2() {
+  // "https://www.youtube.com/channel/UCYfdidRxbB8Qhf0Nx7ioOYw"
+  if #available(macOS 13.0, *) {
+    let url = URL(filePath: "/Users/pcl/Documents/tmp/swift-package-test/lW29PUBv4xE.txt")
+    let text = try? String(
+      contentsOf: url,
+      encoding: String.Encoding.utf8)
+    // grep -shoP '\\\"videoTitle\\\":\\\".*?\\\"'
+    let regex = #/(\\"videoTitle\\":\\".*?\\")/#
+    let matches = text!.matches(of: regex)
+    print("matches.count: ", matches.count)
+    print("matches[0].0: ", matches[0].0)
+    let str1 = String(matches[0].0).components(separatedBy: "\\\"")[3]
+    print("str1: ", str1)
+  }
+}
+
+func regextest3() {
+  // "https://www.youtube.com/channel/UCYfdidRxbB8Qhf0Nx7ioOYw"
+  if #available(macOS 13.0, *) {
+    let url = URL(filePath: "/Users/pcl/Documents/tmp/swift-package-test/UCYfdidRxbB8Qhf0Nx7ioOYw.txt")
+    let text = try? String(
+      contentsOf: url,
+      encoding: String.Encoding.utf8)
+    // grep -shoP '\"videoId\":\".*?\",\"thumbnail\".*?\"title\":{\"runs\":\[{\"text\":\".*?\"'
+    let regex = #/("videoId":".*?","thumbnail".*?"title":\{"runs":\[\{"text":".*?")/#
+    let matches = text!.matches(of: regex)
+    print("matches.count: ", matches.count)
+    print("matches[0].0: ", matches[0].0)
+  }
+}
+
+regextest3()
