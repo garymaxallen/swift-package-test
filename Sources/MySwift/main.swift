@@ -264,10 +264,6 @@ func getJson() {
     let json2 = try! JSONSerialization.jsonObject(
       with: (json11.data(using: String.Encoding.utf8))!, options: [])
 
-    // let result = ((json2 as! [String: Any])["contents"] as! [String: Any])[
-    //   "twoColumnBrowseResultsRenderer"]
-    // print("result: ", result!)
-
     // singleColumnBrowseResultsRenderer, twoColumnBrowseResultsRenderer
     // videoWithContextRenderer, videoRenderer
     // headline, title
@@ -292,7 +288,6 @@ func getJson() {
         (((json["headline"] as! [String: Any])["runs"] as! [Any])[0] as! [String: Any])["text"]
           as! String)
     }
-
     semaphore.signal()
   }.resume()
   semaphore.wait()
