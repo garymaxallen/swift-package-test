@@ -176,7 +176,8 @@ func regextest2() {
 func regextest3() {
   // "https://www.youtube.com/channel/UCYfdidRxbB8Qhf0Nx7ioOYw"
   if #available(macOS 13.0, *) {
-    let url = URL(filePath: "/Users/pcl/Documents/tmp/swift-package-test/UCYfdidRxbB8Qhf0Nx7ioOYw.txt")
+    let url = URL(
+      filePath: "/Users/pcl/Documents/tmp/swift-package-test/UCYfdidRxbB8Qhf0Nx7ioOYw.txt")
     let text = try? String(
       contentsOf: url,
       encoding: String.Encoding.utf8)
@@ -184,8 +185,117 @@ func regextest3() {
     let regex = #/("videoId":".*?","thumbnail".*?"title":\{"runs":\[\{"text":".*?")/#
     let matches = text!.matches(of: regex)
     print("matches.count: ", matches.count)
-    print("matches[0].0: ", matches[0].0)
+    // print("matches[0].0: ", matches[0].0)
+    for item in matches {
+      let videoId = String(item.0).components(separatedBy: "\",\"")[0].components(
+        separatedBy: "\"videoId\":\"")[1]
+      let title = String(item.0).components(separatedBy: "\"text\":\"")[1].dropLast()
+      print("videoId: ", videoId)
+      print("title: ", title)
+    }
   }
 }
 
-regextest3()
+func getJson2() {
+  if #available(macOS 13.0, *) {
+    let url = URL(
+      filePath: "/Users/pcl/Documents/tmp/swift-package-test/UCYfdidRxbB8Qhf0Nx7ioOYw.txt")
+    let text = try? String(
+      contentsOf: url,
+      encoding: String.Encoding.utf8)
+
+    let json1 = text!.components(
+      separatedBy: ">var ytInitialData = ")[1].components(
+        separatedBy: ";</script><script nonce=\"")[0]
+    let json2 = try? JSONSerialization.jsonObject(
+      with: (json1.data(using: String.Encoding.utf8))!, options: [])
+    let json3 =
+      (((((json2 as! [String: Any])["contents"] as! [String: Any])[
+        "twoColumnBrowseResultsRenderer"]
+      as! [String: Any])["tabs"] as! [Any])[0] as! [String: Any])["tabRenderer"] as! [String: Any]
+    // print("title: ", json3["title"]!)
+
+    let contents =
+      (((((((json3["content"] as! [String: Any])["richGridRenderer"] as! [String: Any])[
+        "contents"]
+      as! [Any])[0] as! [String: Any])["richSectionRenderer"] as! [String: Any])["content"]
+      as! [String: Any])["richShelfRenderer"] as! [String: Any])["contents"] as! [Any]
+    for item in contents {
+      let json =
+        (((item as! [String: Any])["richItemRenderer"] as! [String: Any])["content"]
+        as! [String: Any])["videoRenderer"] as! [String: Any]
+      print("videoId: ", json["videoId"]!)
+      print(
+        "title: ",
+        (((json["title"] as! [String: Any])["runs"] as! [Any])[0] as! [String: Any])["text"]
+          as! String)
+    }
+  }
+}
+
+func getJson() {
+  let request = URLRequest(
+    url: URL(string: "https://www.youtube.com/channel/UCYfdidRxbB8Qhf0Nx7ioOYw")!)
+  let semaphore = DispatchSemaphore(value: 0)
+  URLSession.shared.dataTask(with: request) { data, response, error in
+    let htmlStr = String(data: data!, encoding: String.Encoding.utf8)!.replacingOccurrences(
+      of: "\\x22", with: "\""
+    ).replacingOccurrences(
+      of: "\\x7b", with: "{"
+    ).replacingOccurrences(of: "\\x7d", with: "}").replacingOccurrences(of: "\\x5b", with: "[")
+      .replacingOccurrences(of: "\\x5d", with: "]").replacingOccurrences(of: "\\x3d", with: "=")
+      .replacingOccurrences(of: "\\x27", with: "'")
+    // print("htmlStr: ", htmlStr)
+
+    let json1 = htmlStr.components(
+      separatedBy: ">var ytInitialData = ")[1].components(
+        separatedBy: ";</script><script nonce=\"")[0]
+    let json11 = String(String(json1.dropFirst()).dropLast())
+    if #available(macOS 13.0, *) {
+      try? json11.write(
+        to: URL(
+          filePath: "/Users/pcl/Documents/tmp/swift-package-test/json11.json"),
+        atomically: true, encoding: String.Encoding.utf8)
+    } else {
+      // Fallback on earlier versions
+    }
+    // print("json1: ", json11)
+
+    let json2 = try! JSONSerialization.jsonObject(
+      with: (json11.data(using: String.Encoding.utf8))!, options: [])
+
+    // let result = ((json2 as! [String: Any])["contents"] as! [String: Any])[
+    //   "twoColumnBrowseResultsRenderer"]
+    // print("result: ", result!)
+
+    // singleColumnBrowseResultsRenderer, twoColumnBrowseResultsRenderer
+    // videoWithContextRenderer, videoRenderer
+    // headline, title
+    let json3 =
+      (((((json2 as! [String: Any])["contents"] as! [String: Any])[
+        "singleColumnBrowseResultsRenderer"]
+      as! [String: Any])["tabs"] as! [Any])[0] as! [String: Any])["tabRenderer"] as! [String: Any]
+    print("title: ", json3["title"]!)
+
+    let contents =
+      (((((((json3["content"] as! [String: Any])["richGridRenderer"] as! [String: Any])[
+        "contents"]
+      as! [Any])[0] as! [String: Any])["richSectionRenderer"] as! [String: Any])["content"]
+      as! [String: Any])["richShelfRenderer"] as! [String: Any])["contents"] as! [Any]
+    for item in contents {
+      let json =
+        (((item as! [String: Any])["richItemRenderer"] as! [String: Any])["content"]
+        as! [String: Any])["videoWithContextRenderer"] as! [String: Any]
+      print("videoId: ", json["videoId"]!)
+      print(
+        "title: ",
+        (((json["headline"] as! [String: Any])["runs"] as! [Any])[0] as! [String: Any])["text"]
+          as! String)
+    }
+
+    semaphore.signal()
+  }.resume()
+  semaphore.wait()
+}
+
+getJson()
