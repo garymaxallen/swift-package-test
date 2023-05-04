@@ -233,7 +233,7 @@ func getJson2() {
   }
 }
 
-func getJson() {
+func getYoutube() {
   let request = URLRequest(
     url: URL(string: "https://www.youtube.com/channel/UCYfdidRxbB8Qhf0Nx7ioOYw")!)
   let semaphore = DispatchSemaphore(value: 0)
@@ -301,4 +301,47 @@ func getJson() {
   semaphore.wait()
 }
 
-getJson()
+func getAP() {
+  let request = URLRequest(
+    url: URL(string: "https://apnews.com/hub/ap-top-news")!)
+  let semaphore = DispatchSemaphore(value: 0)
+  URLSession.shared.dataTask(with: request) { data, response, error in
+    let htmlStr = String(data: data!, encoding: String.Encoding.utf8)!.components(
+      separatedBy: "window['titanium-state'] = ")[1].components(
+        separatedBy: "window['titanium-cacheConfig']")[0]
+    // print("htmlStr: ", htmlStr)
+
+    // if #available(macOS 13.0, *) {
+    //   try? htmlStr.write(
+    //     to: URL(
+    //       filePath: "/Users/pcl/Documents/tmp/swift-package-test/ap.json"),
+    //     atomically: true, encoding: String.Encoding.utf8)
+    // }
+
+    let json2 = try! JSONSerialization.jsonObject(
+      with: (htmlStr.data(using: String.Encoding.utf8))!, options: [])
+    // print("json2: ", json2)
+
+    let json3 =
+      ((((json2 as! [String: Any])["hub"] as! [String: Any])["data"] as! [String: Any])[
+        "/ap-top-news"] as! [String: Any])["cards"] as! [Any]
+    // print("json3: ", json3)
+
+    for item in json3 {
+      print("publishedDate: ", (item as! [String: Any])["publishedDate"] as! String)
+      print(
+        "headline: ",
+        (((item as! [String: Any])["contents"] as! [Any])[0] as! [String: Any])["headline"]
+          as! String)
+      print(
+        "storyHTML: ",
+        (((item as! [String: Any])["contents"] as! [Any])[0] as! [String: Any])["storyHTML"]
+          as! String)
+    }
+
+    semaphore.signal()
+  }.resume()
+  semaphore.wait()
+}
+
+getAP()
