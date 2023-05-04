@@ -244,13 +244,15 @@ func getJson() {
       of: "\\x7b", with: "{"
     ).replacingOccurrences(of: "\\x7d", with: "}").replacingOccurrences(of: "\\x5b", with: "[")
       .replacingOccurrences(of: "\\x5d", with: "]").replacingOccurrences(of: "\\x3d", with: "=")
-      .replacingOccurrences(of: "\\x27", with: "'")
+      .replacingOccurrences(of: "\\x27", with: "'").replacingOccurrences(of: "\\\\", with: "\\")
     // print("htmlStr: ", htmlStr)
 
     let json1 = htmlStr.components(
       separatedBy: ">var ytInitialData = ")[1].components(
         separatedBy: ";</script><script nonce=\"")[0]
     let json11 = String(String(json1.dropFirst()).dropLast())
+    // print("json1: ", json11)
+
     if #available(macOS 13.0, *) {
       try? json11.write(
         to: URL(
@@ -259,35 +261,41 @@ func getJson() {
     } else {
       // Fallback on earlier versions
     }
-    // print("json1: ", json11)
 
-    let json2 = try! JSONSerialization.jsonObject(
-      with: (json11.data(using: String.Encoding.utf8))!, options: [])
+    do {
+      let json2 = try JSONSerialization.jsonObject(
+        with: (json11.data(using: String.Encoding.utf8))!, options: [])
+
+      let json3 =
+        (((((json2 as! [String: Any])["contents"] as! [String: Any])[
+          "singleColumnBrowseResultsRenderer"]
+        as! [String: Any])["tabs"] as! [Any])[0] as! [String: Any])["tabRenderer"] as! [String: Any]
+      print("title: ", json3["title"]!)
+
+      let contents =
+        (((((((json3["content"] as! [String: Any])["richGridRenderer"] as! [String: Any])[
+          "contents"]
+        as! [Any])[0] as! [String: Any])["richSectionRenderer"] as! [String: Any])["content"]
+        as! [String: Any])["richShelfRenderer"] as! [String: Any])["contents"] as! [Any]
+      for item in contents {
+        let json =
+          (((item as! [String: Any])["richItemRenderer"] as! [String: Any])["content"]
+          as! [String: Any])["videoWithContextRenderer"] as! [String: Any]
+        print("videoId: ", json["videoId"]!)
+        print(
+          "title: ",
+          (((json["headline"] as! [String: Any])["runs"] as! [Any])[0] as! [String: Any])["text"]
+            as! String)
+      }
+
+    } catch {
+      print("error: ", error)
+    }
 
     // singleColumnBrowseResultsRenderer, twoColumnBrowseResultsRenderer
     // videoWithContextRenderer, videoRenderer
     // headline, title
-    let json3 =
-      (((((json2 as! [String: Any])["contents"] as! [String: Any])[
-        "singleColumnBrowseResultsRenderer"]
-      as! [String: Any])["tabs"] as! [Any])[0] as! [String: Any])["tabRenderer"] as! [String: Any]
-    print("title: ", json3["title"]!)
 
-    let contents =
-      (((((((json3["content"] as! [String: Any])["richGridRenderer"] as! [String: Any])[
-        "contents"]
-      as! [Any])[0] as! [String: Any])["richSectionRenderer"] as! [String: Any])["content"]
-      as! [String: Any])["richShelfRenderer"] as! [String: Any])["contents"] as! [Any]
-    for item in contents {
-      let json =
-        (((item as! [String: Any])["richItemRenderer"] as! [String: Any])["content"]
-        as! [String: Any])["videoWithContextRenderer"] as! [String: Any]
-      print("videoId: ", json["videoId"]!)
-      print(
-        "title: ",
-        (((json["headline"] as! [String: Any])["runs"] as! [Any])[0] as! [String: Any])["text"]
-          as! String)
-    }
     semaphore.signal()
   }.resume()
   semaphore.wait()
