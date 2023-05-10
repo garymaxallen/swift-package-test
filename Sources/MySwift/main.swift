@@ -363,4 +363,32 @@ func getAP() {
   semaphore.wait()
 }
 
-getAP()
+// getAP()
+
+func getReuters() {
+  // var category = "ap-top-news"
+  // let category = "world-news"
+  let request = URLRequest(
+    url: URL(string: "https://www.reuters.com/world/")!)
+  let semaphore = DispatchSemaphore(value: 0)
+  URLSession.shared.dataTask(with: request) { data, response, error in
+    let htmlStr = String(data: data!, encoding: String.Encoding.utf8)!
+    // print("htmlStr: ", htmlStr)
+
+    if #available(macOS 13.0, *) {
+      try? htmlStr.write(
+        to: URL(
+          filePath: "/Users/pcl/Documents/tmp/swift-package-test/world.html"),
+        atomically: true, encoding: String.Encoding.utf8)
+    }
+
+    // let json2 = try! JSONSerialization.jsonObject(
+    //   with: (htmlStr.data(using: String.Encoding.utf8))!, options: [])
+    // print("json2: ", json2)
+
+    semaphore.signal()
+  }.resume()
+  semaphore.wait()
+}
+
+getReuters()
