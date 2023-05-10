@@ -302,8 +302,10 @@ func getYoutube() {
 }
 
 func getAP() {
+  // var category = "ap-top-news"
+  let category = "world-news"
   let request = URLRequest(
-    url: URL(string: "https://apnews.com/hub/ap-top-news")!)
+    url: URL(string: "https://apnews.com/hub/" + category)!)
   let semaphore = DispatchSemaphore(value: 0)
   URLSession.shared.dataTask(with: request) { data, response, error in
     let htmlStr = String(data: data!, encoding: String.Encoding.utf8)!.components(
@@ -311,12 +313,12 @@ func getAP() {
         separatedBy: "window['titanium-cacheConfig']")[0]
     // print("htmlStr: ", htmlStr)
 
-    // if #available(macOS 13.0, *) {
-    //   try? htmlStr.write(
-    //     to: URL(
-    //       filePath: "/Users/pcl/Documents/tmp/swift-package-test/ap.json"),
-    //     atomically: true, encoding: String.Encoding.utf8)
-    // }
+    if #available(macOS 13.0, *) {
+      try? htmlStr.write(
+        to: URL(
+          filePath: "/Users/pcl/Documents/tmp/swift-package-test/ap.json"),
+        atomically: true, encoding: String.Encoding.utf8)
+    }
 
     let json2 = try! JSONSerialization.jsonObject(
       with: (htmlStr.data(using: String.Encoding.utf8))!, options: [])
@@ -324,21 +326,38 @@ func getAP() {
 
     let json3 =
       ((((json2 as! [String: Any])["hub"] as! [String: Any])["data"] as! [String: Any])[
-        "/ap-top-news"] as! [String: Any])["cards"] as! [Any]
-    // print("json3: ", json3)
+        "/" + category] as! [String: Any])["cards"] as! [Any]
+
+    // print("json3[0]: ", json3[0])
 
     for item in json3 {
-      print("publishedDate: ", (item as! [String: Any])["publishedDate"] as! String)
-      print(
-        "headline: ",
-        (((item as! [String: Any])["contents"] as! [Any])[0] as! [String: Any])["headline"]
-          as! String)
-      print(
-        "storyHTML: ",
-        (((item as! [String: Any])["contents"] as! [Any])[0] as! [String: Any])["storyHTML"]
-          as! String)
+      if (item as! [String: Any])["cardType"] as! String == "Hub Peek" {
+        let json4 = (item as! [String: Any])["feed"] as! [Any]
+        for item2 in json4 {
+          let publishedDate = (item2 as! [String: Any])["publishedDate"] as! String
+          let headline =
+            (((item2 as! [String: Any])["contents"] as! [Any])[0] as! [String: Any])["headline"]
+            as! String
+          let storyHTML =
+            (((item2 as! [String: Any])["contents"] as! [Any])[0] as! [String: Any])["storyHTML"]
+            as! String
+          print("publishedDate: ", publishedDate)
+          print("headline: ", headline)
+          print("storyHTML: ", storyHTML)
+        }
+      } else if (item as! [String: Any])["cardType"] as! String == "Wire Story" {
+        let publishedDate = (item as! [String: Any])["publishedDate"] as! String
+        let headline =
+          (((item as! [String: Any])["contents"] as! [Any])[0] as! [String: Any])["headline"]
+          as! String
+        let storyHTML =
+          (((item as! [String: Any])["contents"] as! [Any])[0] as! [String: Any])["storyHTML"]
+          as! String
+        print("publishedDate: ", publishedDate)
+        print("headline: ", headline)
+        print("storyHTML: ", storyHTML)
+      }
     }
-
     semaphore.signal()
   }.resume()
   semaphore.wait()
