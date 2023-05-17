@@ -1,5 +1,6 @@
 import Foundation
 import MyC
+import WebKit
 
 func func1() {
   print("++++++++++++++++++ Hello, world +++++++++++++++++++++++++")
@@ -365,6 +366,31 @@ func getAP() {
 
 // getAP()
 
+func strToFile(_ str: String, _ fileName: String) {
+  if #available(macOS 13.0, *) {
+    try? str.write(
+      to: URL(
+        filePath: "/Users/pcl/Documents/tmp/swift-package-test/" + fileName),
+      atomically: true, encoding: String.Encoding.utf8)
+  }
+}
+
+func htmlToStr(_ htmlStr: String) -> String {
+  var str = "htmlToStr error"
+  do {
+    str = try NSAttributedString(
+      data: htmlStr.data(using: String.Encoding.utf8)!,
+      options: [
+        .documentType: NSAttributedString.DocumentType.html,
+        .characterEncoding: String.Encoding.utf8.rawValue,
+      ], documentAttributes: nil
+    ).string
+  } catch {
+    print("htmlToStr error: ", error.localizedDescription)
+  }
+  return str
+}
+
 func getReuters() {
   // var category = "ap-top-news"
   // let category = "world-news"
@@ -372,23 +398,118 @@ func getReuters() {
     url: URL(string: "https://www.reuters.com/world/")!)
   let semaphore = DispatchSemaphore(value: 0)
   URLSession.shared.dataTask(with: request) { data, response, error in
-    let htmlStr = String(data: data!, encoding: String.Encoding.utf8)!
+    if let error = error {
+      print("error: ", error.localizedDescription)
+      return
+    }
+    guard let data = data else {
+      print("data error")
+      return
+    }
+    let htmlStr = String(data: data, encoding: String.Encoding.utf8)!
     // print("htmlStr: ", htmlStr)
 
-    if #available(macOS 13.0, *) {
-      try? htmlStr.write(
-        to: URL(
-          filePath: "/Users/pcl/Documents/tmp/swift-package-test/world.html"),
-        atomically: true, encoding: String.Encoding.utf8)
+    if !htmlStr.components(separatedBy: "Fusion.globalContent=").indices.contains(1) {
+      print("components separate error")
+      semaphore.signal()
+      return
     }
 
-    // let json2 = try! JSONSerialization.jsonObject(
-    //   with: (htmlStr.data(using: String.Encoding.utf8))!, options: [])
-    // print("json2: ", json2)
+    let json1 = htmlStr.components(separatedBy: "Fusion.globalContent=")[1].components(
+      separatedBy: ";Fusion.globalContentConfig=")[0]
+    // print("json1: ", json1)
+    // strToFile(json1, "json1.json")
+
+    var json2: Any
+    do {
+      json2 = try JSONSerialization.jsonObject(
+        with: (json1.data(using: String.Encoding.utf8))!, options: [])
+      // print("json2: ", json2)
+    } catch {
+      print("json2 error: ", error.localizedDescription)
+      semaphore.signal()
+      return
+    }
+
+    guard
+      let json3 = ((json2 as? [String: Any])?["result"] as? [String: Any])?["articles"] as? [Any]
+    else {
+      print("json3 error")
+      semaphore.signal()
+      return
+    }
+    print(
+      "canonical_url: ",
+      "https://www.reuters.com" + ((json3[0] as? [String: Any])?["canonical_url"] as! String))
+    print("title: ", (json3[0] as? [String: Any])?["title"] as! String)
+    print("description: ", (json3[0] as? [String: Any])?["description"] as! String)
+    print("published_time: ", (json3[0] as? [String: Any])?["published_time"] as! String)
 
     semaphore.signal()
   }.resume()
   semaphore.wait()
 }
 
-getReuters()
+func getArticle() {
+  let request = URLRequest(
+    url: URL(
+      string:
+        "https://www.reuters.com/world/europe/can-ukraine-use-patriot-defense-systems-knock-out-russian-hypersonic-missiles-2023-05-17/"
+    )!)
+  let semaphore = DispatchSemaphore(value: 0)
+  URLSession.shared.dataTask(with: request) { data, response, error in
+    if let error = error {
+      print("error: ", error.localizedDescription)
+      return
+    }
+    guard let data = data else {
+      print("data error")
+      return
+    }
+    let htmlStr = String(data: data, encoding: String.Encoding.utf8)!
+    // print("htmlStr: ", htmlStr)
+    // strToFile(htmlStr, "article.html")
+
+    if !htmlStr.components(separatedBy: "Fusion.globalContent=").indices.contains(1) {
+      print("components separate error")
+      semaphore.signal()
+      return
+    }
+
+    let json1 = htmlStr.components(separatedBy: "Fusion.globalContent=")[1].components(
+      separatedBy: ";Fusion.globalContentConfig=")[0]
+    // print("json1: ", json1)
+    // strToFile(json1, "json1.json")
+
+    var json2: Any
+    do {
+      json2 = try JSONSerialization.jsonObject(
+        with: (json1.data(using: String.Encoding.utf8))!, options: [])
+      // print("json2: ", json2)
+    } catch {
+      print("json2 error: ", error.localizedDescription)
+      semaphore.signal()
+      return
+    }
+
+    guard
+      let json3 = ((json2 as? [String: Any])?["result"] as? [String: Any])?["content_elements"]
+        as? [Any]
+    else {
+      print("json3 error")
+      semaphore.signal()
+      return
+    }
+
+    var article = ""
+    for item in json3 {
+      article += htmlToStr((item as? [String: Any])?["content"] as! String) + "\n"
+    }
+    print("article: ", article)
+
+    semaphore.signal()
+  }.resume()
+  semaphore.wait()
+}
+
+getArticle()
